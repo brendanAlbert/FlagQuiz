@@ -21,6 +21,42 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+/**
+ *  MainActivity is the main Controller for the app Flag Quiz.
+ *
+ *  There is a constant int <code>FLAGS_IN_QUIZ</code> which represents how many flags
+ *  the user will try to guess.
+ *
+ *  The instance variables include:
+ *      - A constant String for use in logcat messages.
+ *      - An array of Buttons for the flag options, there are four currently.
+ *      - A list of all the possible countries loaded from JSON.
+ *      - A much shorter list which is populated randomly from the all list,
+ *          it will contain only the countries for the quiz.
+ *      - A correct country variable.
+ *      - Int to track the total guesses.
+ *      - Int to track number of correct guesses.
+ *      - A SecureRandom object to help randomize the quiz
+ *      - A handler which provides a delay after showing a correct answer so the user gets a
+ *          second to associate the name of the country with its flag.
+ *      - TextView to track which question number user is on.
+ *      - ImageView to display flag.
+ *      - TextView that will display the correct answer in green text.
+ *
+ *   This class has four methods:
+ *      - onCreate
+ *          onCreate sets the content view, initializes the quiz countries list, the random
+ *          number generator, and the handler for delaying transitions.
+ *          Also, the View and Button widgets are connected.
+ *          The question # out of FLAG_IN_QUIZ is rendered.
+ *          A try-catch surrounds the JSON loader which populates the quiz countries list.
+ *          Lastly, resetQuiz is called.
+ *
+ *      - resetQuiz
+ *      - loadNextFlag
+ *      - makeGuess
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Flag Quiz";
@@ -40,6 +76,22 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mFlagImageView; // displays a flag
     private TextView mAnswerTextView; // displays correct answer
 
+    /**
+     * onCreate is called when the app starts.
+     *
+     *  The content view is set, the quiz countries list, random number generator
+     *  and the handler for transitions are all initialized.
+     *
+     *  The TextViews and ImageView are connected.
+     *
+     *  The current question text is set.
+     *
+     *  A try catch surrounds the JSON loading functionality to populate the all countries list.
+     *
+     *  The quiz is reset.
+     *
+     * @param savedInstanceState restores any previous state if applicable.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Sets up and starts a new quiz.
+     * Guesses are reset, new countries are loaded into the quiz list, and the quiz is started
+     * via loadNextFlag().
      */
     public void resetQuiz() {
 
@@ -105,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Method initiates the process of loading the next flag for the quiz, showing
+     * The method loadNextFlag initiates the process of loading the next flag for the quiz, showing
      * the flag's image and then 4 buttons, one of which contains the correct answer.
      */
     private void loadNextFlag() {
@@ -194,8 +248,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, 2000);
             } else {
+                // COMPLETED: Nested in this decision, if the user has completed all 10 questions, show an AlertDialog
                 // Show an AlertDialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                // COMPLETED: with the statistics and an option to Reset Quiz
                 builder.setMessage(getString(R.string.results, mTotalGuesses, ((double) mCorrectGuesses / mTotalGuesses)*100 ));
                 // resetQuiz
                 builder.setPositiveButton(getString(R.string.reset_quiz), new DialogInterface.OnClickListener() {
@@ -204,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
                         resetQuiz();
                     }
                 });
+
                 builder.setCancelable(false);
                 builder.create();
                 builder.show();
@@ -213,18 +270,10 @@ public class MainActivity extends AppCompatActivity {
             // COMPLETED: Else, the answer is incorrect, so display "Incorrect Guess!" in red
             mAnswerTextView.setText(getString(R.string.incorrect_answer));
             mAnswerTextView.setTextColor(ContextCompat.getColor(this, R.color.incorrect_answer));
+            // COMPLETED: and disable just the incorrect button.
             clickedButton.setEnabled(false);
         }
 
-
-        // TODO: Nested in this decision, if the user has completed all 10 questions, show an AlertDialog
-        // TODO: with the statistics and an option to Reset Quiz
-        // TODO: and disable just the incorrect button.
-
-
-
-
     }
-
 
 }
